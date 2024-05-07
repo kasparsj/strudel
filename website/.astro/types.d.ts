@@ -184,7 +184,100 @@ declare module 'astro:content' {
 	>;
 
 	type ContentEntryMap = {
-		
+		"blog": {
+"release-0.0.2-schwindlig.mdx": {
+	id: "release-0.0.2-schwindlig.mdx";
+  slug: "release-002-schwindlig";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.0.2.1-stuermisch.mdx": {
+	id: "release-0.0.2.1-stuermisch.mdx";
+  slug: "release-0021-stuermisch";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.0.3-maelstrom.mdx": {
+	id: "release-0.0.3-maelstrom.mdx";
+  slug: "release-003-maelstrom";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.0.4-gischt.mdx": {
+	id: "release-0.0.4-gischt.mdx";
+  slug: "release-004-gischt";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.3.0-donauwelle.mdx": {
+	id: "release-0.3.0-donauwelle.mdx";
+  slug: "release-030-donauwelle";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.4.0-brandung.mdx": {
+	id: "release-0.4.0-brandung.mdx";
+  slug: "release-040-brandung";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.5.0-wirbel.mdx": {
+	id: "release-0.5.0-wirbel.mdx";
+  slug: "release-050-wirbel";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.6.0-zimtschnecke.mdx": {
+	id: "release-0.6.0-zimtschnecke.mdx";
+  slug: "release-060-zimtschnecke";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.7.0-zuckerguss.mdx": {
+	id: "release-0.7.0-zuckerguss.mdx";
+  slug: "release-070-zuckerguss";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.8.0-himbeermuffin.mdx": {
+	id: "release-0.8.0-himbeermuffin.mdx";
+  slug: "release-080-himbeermuffin";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-0.9.0-bananenbrot.mdx": {
+	id: "release-0.9.0-bananenbrot.mdx";
+  slug: "release-090-bananenbrot";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"release-1.0.0-geburtstagskuchen.mdx": {
+	id: "release-1.0.0-geburtstagskuchen.mdx";
+  slug: "release-100-geburtstagskuchen";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"year-2.mdx": {
+	id: "year-2.mdx";
+  slug: "year-2";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+};
+
 	};
 
 	type DataEntryMap = {
@@ -193,5 +286,5 @@ declare module 'astro:content' {
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
 
-	type ContentConfig = never;
+	type ContentConfig = typeof import("../src/content/config");
 }
