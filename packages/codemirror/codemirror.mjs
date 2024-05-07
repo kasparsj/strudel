@@ -89,11 +89,19 @@ export function initEditor({ initialCode = '', onChange, onEvaluate, onStop, roo
             run: () => onEvaluate?.(),
           },
           {
+            key: 'Cmd-Enter',
+            run: () => onEvaluate?.(),
+          },
+          {
             key: 'Alt-Enter',
             run: () => onEvaluate?.(),
           },
           {
             key: 'Ctrl-.',
+            run: () => onStop?.(),
+          },
+          {
+            key: 'Cmd-.',
             run: () => onStop?.(),
           },
           {
