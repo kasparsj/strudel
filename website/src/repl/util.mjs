@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
 import { writeText } from '@tauri-apps/api/clipboard';
 import { createContext } from 'react';
-import {$featuredPatterns, loadDBPatterns, setViewingPatternData, userPattern} from '@src/user_pattern_utils.mjs';
+import { $featuredPatterns, loadDBPatterns, setViewingPatternData, userPattern } from '@src/user_pattern_utils.mjs';
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(
