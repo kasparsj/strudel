@@ -206,6 +206,10 @@ export function PatternsTab({ context }) {
             onClick={(id) =>
               updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, autoResetPatternOnChange)
             }
+            onNewTab={(id) => {
+              const url = `?${id}`;
+              window.open(url, '_blank').focus();
+            }}
             onDuplicate={(id) => {
               const { data } = userPattern.duplicate(id);
               updateCodeWindow(data);
