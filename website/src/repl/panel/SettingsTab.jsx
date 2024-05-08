@@ -90,6 +90,7 @@ export function SettingsTab({ started }) {
     isTooltipEnabled,
     isFlashEnabled,
     isSyncEnabled,
+    autoResetPatternOnChange,
     isLineWrappingEnabled,
     fontSize,
     fontFamily,
@@ -198,6 +199,14 @@ export function SettingsTab({ started }) {
             }
           }}
           value={isSyncEnabled}
+        />
+      </FormItem>
+      <FormItem label="Patterns">
+        <Checkbox
+            label="Auto reset pattern on change"
+            disabled={window.parent?.location.pathname.includes('oodles')}
+            onChange={(cbEvent) => settingsMap.setKey('autoResetPatternOnChange', cbEvent.target.checked)}
+            value={autoResetPatternOnChange}
         />
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>

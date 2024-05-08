@@ -115,6 +115,8 @@ export function Repl({ embedded = false }) {
       bgFill: false,
     });
 
+    editorRef.current = editor;
+
     // init settings
 
     initCode().then(async (decoded) => {
@@ -130,12 +132,9 @@ export function Repl({ embedded = false }) {
         code = randomTune;
         msg = `A random code snippet named "${name}" has been loaded!`;
       }
-      editor.setCode(code);
-      setDocumentTitle(code);
+      setCode(code);
       logger(`Welcome to Strudel! ${msg} Press play or hit ctrl+enter to run it!`, 'highlight');
     });
-
-    editorRef.current = editor;
   }, []);
 
   const [replState, setReplState] = useState({});
@@ -174,6 +173,11 @@ export function Repl({ embedded = false }) {
   // UI Actions
   //
 
+  const setCode = (code) => {
+    editorRef.current.setCode(code);
+    setDocumentTitle(code);
+  }
+
   const setDocumentTitle = (code) => {
     const meta = getMetadata(code);
     document.title = (meta.title ? `${meta.title} - ` : '') + 'Strudel REPL';
@@ -195,10 +199,13 @@ export function Repl({ embedded = false }) {
 
   const handleUpdate = async (patternData, reset = false) => {
     setViewingPatternData(patternData);
-    editorRef.current.setCode(patternData.code);
     if (reset) {
+      editorRef.current.setCode(patternData.code);
       await resetEditor();
       handleEvaluate();
+    }
+    else {
+      setCode(patternData.code);
     }
   };
 
