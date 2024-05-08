@@ -92,10 +92,11 @@ function getField(field, pattern, meta) {
         strudel: '🌀',
         str: '🌀',
         hydra: '🐙',
-        tag: '🏷️',
-        project: '🪩',
+        tag: '@',
+        genre: '🎼',
+        album: '💽',
+        project: '💽',
         by: '⭐',
-        type: '🗄️',
       };
       return types[meta.type];
     case 'project':
@@ -127,7 +128,7 @@ function PatternButtons({ patterns, fields, activePattern, started, onClick, onN
       {Object.values(patterns)
         .reverse()
         .map((pattern) => {
-          const id = pattern.id;
+          const id = pattern.id || 'undefined';
           return (
             <div
               className={classNames(
@@ -236,6 +237,7 @@ const UserPatterns = ({ context }) => {
 
   return (
     <>
+      <div className="font-mono text-sm">List view</div>
       {patternViewStyle === 'list' && (
         <PatternButtons
           onClick={openPattern}
@@ -259,15 +261,18 @@ const UserTags = ({ context }) => {
   let userTags = [];
   if (browseBy) {
     userTags = Object.values(userPatterns).reduce((a, p) => {
-      if (!a.includes(p.meta[browseBy])) {
-        return a.concat(p.meta[browseBy]);
-      }
+      const arr = Array.isArray(p.meta[browseBy]) ? p.meta[browseBy] : [p.meta[browseBy]];
+      arr.forEach((v) => {
+        if (!a.includes(v)) {
+          a = a.concat(v);
+        }
+      });
       return a;
     }, userTags);
-    userTags = [...new Set(userTags)].map((t) => {
+    userTags = userTags.map((t) => {
       return {
         id: t,
-        meta: { title: t, type: browseBy },
+        meta: { title: t, type: browseBy === 'type' ? t : browseBy },
       };
     });
   } else {
@@ -280,7 +285,7 @@ const UserTags = ({ context }) => {
     userTags = userTags.map((t) => {
       return {
         id: t,
-        meta: { title: `by ${t}`, type: 'tag' },
+        meta: { title: `by ${t === 'by' ? 'author' : t}`, type: 'tag' },
       };
     });
   }
@@ -293,8 +298,8 @@ const UserTags = ({ context }) => {
   return (
     <>
       <div className="font-mono text-sm">
-        Browse
-        {browseBy && <> / {browseBy}</>}
+        Browse view
+        {browseBy && <> / by {browseBy === 'by' ? 'author' : browseBy}</>}
       </div>
       {patternViewStyle === 'list' && (
         <PatternButtons
