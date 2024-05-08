@@ -89,6 +89,18 @@ export function useActivePattern() {
   return useStore($activePattern);
 }
 
+const $browseBy = sessionAtom('browseBy', '');
+
+export function setBrowseBy(key) {
+  $browseBy.set(key);
+}
+export function getBrowseBy() {
+  return $browseBy.get();
+}
+export function useBrowseBy() {
+  return useStore($browseBy);
+}
+
 export const setLatestCode = (code) => settingsMap.setKey('latestCode', code);
 
 const defaultCode = '';
