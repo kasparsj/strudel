@@ -60,6 +60,12 @@ export function Panel({ context }) {
     }, []),
   );
 
+  useClearLog(
+      useCallback((e) => {
+        setLog( []);
+      }, [])
+  );
+
   const PanelTab = ({ children, name, label }) => (
     <>
       <div
@@ -125,4 +131,8 @@ export function Panel({ context }) {
 
 function useLogger(onTrigger) {
   useEvent(logger.key, onTrigger);
+}
+
+function useClearLog(onTrigger) {
+  useEvent(logger.clearKey, onTrigger);
 }
