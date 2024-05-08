@@ -12,6 +12,9 @@ import { useExamplePatterns } from '../useExamplePatterns';
 import { parseJSON } from '../util.mjs';
 import { ButtonGroup } from './Forms.jsx';
 import { settingsMap, useSettings } from '../../settings.mjs';
+import NewTabIcon from '@heroicons/react/20/solid/ArrowTopRightOnSquareIcon';
+import DuplicateIcon from '@heroicons/react/20/solid/DocumentDuplicateIcon';
+import TrashIcon from '@heroicons/react/20/solid/TrashIcon';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -36,22 +39,68 @@ export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
   return <>{`${pattern.id}: ${title} by ${Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous'}`}</>;
 }
 
-function PatternButton({ showOutline, onClick, pattern, showHiglight }) {
+function PatternActions({pattern, onNewTab, onDuplicate, onDelete}) {
+  const id = pattern.id;
   return (
-    <a
-      className={classNames(
-        'mr-4 hover:opacity-50 cursor-pointer block',
-        showOutline && 'outline outline-1',
-        showHiglight && 'bg-selection',
-      )}
-      onClick={onClick}
-    >
-      <PatternLabel pattern={pattern} />
-    </a>
+      <span className="absolute right-0">
+        {onNewTab && (<NewTabIcon onClick={() => onNewTab(id)} className="cursor-pointer inline-block w-4 h-4 mr-2"/>)}
+        {onDuplicate && (<DuplicateIcon onClick={() => onDuplicate(id)} className="cursor-pointer inline-block w-4 h-4 mr-2"/>)}
+        {onDelete && (<TrashIcon onClick={() => onDelete(id)} className="cursor-pointer inline-block w-4 h-4 mr-2"/>)}
+      </span>
   );
 }
 
-function PatternButtons({ patterns, activePattern, onClick, started }) {
+function getField(field, pattern, meta) {
+  switch (field) {
+    case 'by':
+      return ` by ${Array.isArray(meta.by) ? meta.by.join(',') : 'Anonymous'}`;
+    case 'title':
+      let title = meta.title;
+      if (title == null) {
+        const date = new Date(pattern.created_at);
+        if (!isNaN(date)) {
+          title = date.toLocaleDateString();
+        }
+      }
+      if (title == null) {
+        title = pattern.hash;
+      }
+      if (title == null) {
+        title = 'unnamed';
+      }
+      return title;
+    case 'id':
+      return pattern[field];
+    case 'icon':
+      const types = {
+        'strudel': '🌀',
+        'hydra': '🐙',
+      };
+      return types[meta.type];
+    case 'project':
+      return `(${meta.project})`;
+    default:
+      return meta[field];
+  }
+}
+
+function PatternButton({fields, onClick, pattern}) {
+  const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
+  return (
+    <span
+      onClick={onClick}
+      className={classNames(
+        'mr-4 hover:opacity-50 cursor-pointer',
+      )}
+    >
+      {fields.map((field) => (
+          <span className="inline-block mr-2">{getField(field, pattern, meta)}</span>
+      ))}
+    </span>
+  );
+}
+
+function PatternButtons({ patterns, fields, activePattern, started, onClick, onNewTab, onDuplicate, onDelete }) {
   const viewingPatternStore = useViewingPatternData();
   const viewingPatternData = parseJSON(viewingPatternStore);
   const viewingPatternID = viewingPatternData.id;
@@ -62,13 +111,25 @@ function PatternButtons({ patterns, activePattern, onClick, started }) {
         .map((pattern) => {
           const id = pattern.id;
           return (
-            <PatternButton
-              pattern={pattern}
-              key={id}
-              showHiglight={id === viewingPatternID}
-              showOutline={id === activePattern && started}
-              onClick={() => onClick(id)}
-            />
+              <div className={classNames(
+                  (id === viewingPatternID) && 'bg-selection',
+                  (id === activePattern) && started && 'outline outline-1',
+                  'relative'
+              )} key={id}>
+                <PatternButton
+                    fields={fields}
+                    pattern={pattern}
+                    onClick={() => onClick(id)}
+                />
+                {(onNewTab || onDuplicate || onDelete) && (
+                    <PatternActions
+                        pattern={pattern}
+                        onNewTab={onNewTab}
+                        onDuplicate={onDuplicate}
+                        onDelete={onDelete}
+                    />
+                )}
+              </div>
           );
         })}
     </div>
@@ -118,20 +179,6 @@ export function PatternsTab({ context }) {
                 updateCodeWindow(data);
               }}
             />
-            <ActionButton
-              label="duplicate"
-              onClick={() => {
-                const { data } = userPattern.duplicate(viewingPatternData);
-                updateCodeWindow(data);
-              }}
-            />
-            <ActionButton
-              label="delete"
-              onClick={() => {
-                const { data } = userPattern.delete(viewingPatternID);
-                updateCodeWindow({ ...data, collection: userPattern.collection });
-              }}
-            />
             <label className="hover:opacity-50 cursor-pointer">
               <input
                 style={{ display: 'none' }}
@@ -161,7 +208,16 @@ export function PatternsTab({ context }) {
             onClick={(id) =>
               updateCodeWindow({ ...userPatterns[id], collection: userPattern.collection }, autoResetPatternOnChange)
             }
+            onDuplicate={(id) => {
+              const { data } = userPattern.duplicate(id);
+              updateCodeWindow(data);
+            }}
+            onDelete={(id) => {
+              const { data } = userPattern.delete(id);
+              updateCodeWindow({ ...data, collection: userPattern.collection });
+            }}
             patterns={userPatterns}
+            fields={['icon', 'title', 'project', 'actions']}
             started={context.started}
             activePattern={activePattern}
             viewingPatternID={viewingPatternID}
@@ -178,6 +234,7 @@ export function PatternsTab({ context }) {
                     onClick={(id) => updateCodeWindow({ ...patterns[id], collection }, autoResetPatternOnChange)}
                     started={context.started}
                     patterns={patterns}
+                    fields={['id', 'title', 'by', 'actions']}
                     activePattern={activePattern}
                   />
                 </div>
