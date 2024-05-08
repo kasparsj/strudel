@@ -5,6 +5,8 @@ import {
   useActivePattern,
   useViewingPatternData,
   userPattern,
+  useBrowseBy,
+  setBrowseBy,
 } from '../../user_pattern_utils.mjs';
 import { useMemo } from 'react';
 import { getMetadata } from '../../metadata_parser';
@@ -23,7 +25,7 @@ function classNames(...classes) {
 }
 
 export function PatternLabel({ pattern } /* : { pattern: Tables<'code'> } */) {
-  const meta = useMemo(() => getMetadata(pattern.code), [pattern]);
+  const meta = useMemo(() => pattern.meta || getMetadata(pattern.code), [pattern]);
 
   let title = meta.title;
   if (title == null) {
@@ -91,6 +93,9 @@ function getField(field, pattern, meta) {
         str: '🌀',
         hydra: '🐙',
         tag: '🏷️',
+        project: '🪩',
+        by: '⭐',
+        type: '🗄️',
       };
       return types[meta.type];
     case 'project':
@@ -154,39 +159,43 @@ function ActionButton({ children, onClick, label, labelIsHidden }) {
 
 const PatternTabUserHeader = ({ onNew, patternView, patternViewStyle }) => {
   return (
-    <div>
-      <div className="pr-4 space-x-4 border-b border-foreground flex max-w-full overflow-x-auto">
-        <ActionButton label="new" onClick={onNew} />
-        <label className="hover:opacity-50 cursor-pointer">
-          <input
-            style={{ display: 'none' }}
-            type="file"
-            multiple
-            accept="text/plain,application/json"
-            onChange={(e) => importPatterns(e.target.files)}
-          />
-          import
-        </label>
-        <ActionButton label="export" onClick={exportPatterns} />
-        {patternView === 'browse' && (
-          <ActionButton label="list" onClick={() => settingsMap.setKey('patternView', 'list')} />
-        )}
-        {patternView === 'list' && (
-          <ActionButton label="browse" onClick={() => settingsMap.setKey('patternView', 'browse')} />
-        )}
-        {patternViewStyle === 'thumbs' && (
-          <ActionButton
-            label={<ListViewIcon className="w-4 h-4 mr-2" />}
-            onClick={() => settingsMap.setKey('patternViewStyle', 'list')}
-          />
-        )}
-        {patternViewStyle === 'list' && (
-          <ActionButton
-            label={<ThumbViewIcon className="w-4 h-4 mr-2" />}
-            onClick={() => settingsMap.setKey('patternViewStyle', 'thumbs')}
-          />
-        )}
-      </div>
+    <div className="pr-4 space-x-4 border-b border-foreground flex max-w-full overflow-x-auto">
+      <ActionButton label="new" onClick={onNew} />
+      <label className="hover:opacity-50 cursor-pointer">
+        <input
+          style={{ display: 'none' }}
+          type="file"
+          multiple
+          accept="text/plain,application/json"
+          onChange={(e) => importPatterns(e.target.files)}
+        />
+        import
+      </label>
+      <ActionButton label="export" onClick={exportPatterns} />
+      {patternView === 'browse' && (
+        <ActionButton
+          label="list"
+          onClick={() => {
+            setBrowseBy(null);
+            settingsMap.setKey('patternView', 'list');
+          }}
+        />
+      )}
+      {patternView === 'list' && (
+        <ActionButton label="browse" onClick={() => settingsMap.setKey('patternView', 'browse')} />
+      )}
+      {patternViewStyle === 'thumbs' && (
+        <ActionButton
+          label={<ListViewIcon className="w-4 h-4 mr-2" />}
+          onClick={() => settingsMap.setKey('patternViewStyle', 'list')}
+        />
+      )}
+      {patternViewStyle === 'list' && (
+        <ActionButton
+          label={<ThumbViewIcon className="w-4 h-4 mr-2" />}
+          onClick={() => settingsMap.setKey('patternViewStyle', 'thumbs')}
+        />
+      )}
     </div>
   );
 };
@@ -245,20 +254,48 @@ const UserPatterns = ({ context }) => {
 };
 
 const UserTags = ({ context }) => {
-  const { patternViewStyle } = useSettings();
+  const { userPatterns, patternViewStyle } = useSettings();
+  const browseBy = useBrowseBy();
+  let userTags = [];
+  if (browseBy) {
+    userTags = Object.values(userPatterns).reduce((a, p) => {
+      if (!a.includes(p.meta[browseBy])) {
+        return a.concat(p.meta[browseBy]);
+      }
+      return a;
+    }, userTags);
+    userTags = [...new Set(userTags)].map((t) => {
+      return {
+        id: t,
+        meta: { title: t, type: browseBy },
+      };
+    });
+  } else {
+    userTags = Object.values(userPatterns).reduce((a, p) => {
+      const newTags = Object.keys(p.meta).filter((k) => {
+        return k !== 'title' && !a.includes(k);
+      });
+      return a.concat(newTags);
+    }, userTags);
+    userTags = userTags.map((t) => {
+      return {
+        id: t,
+        meta: { title: `by ${t}`, type: 'tag' },
+      };
+    });
+  }
 
-  const userTags = ['author', 'project', 'type'].map((t) => {
-    return {
-      id: t,
-      meta: { title: t, type: 'tag' },
-    };
-  });
-
-  const openTag = () => {};
+  const openTag = (id) => {
+    setBrowseBy(id);
+  };
   const deleteTag = () => {};
 
   return (
     <>
+      <div className="font-mono text-sm">
+        Browse
+        {browseBy && <> / {browseBy}</>}
+      </div>
       {patternViewStyle === 'list' && (
         <PatternButtons
           onClick={openTag}

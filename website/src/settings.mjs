@@ -1,6 +1,7 @@
 import { persistentMap } from '@nanostores/persistent';
 import { useStore } from '@nanostores/react';
 import { register } from '@strudel/core';
+import { getMetadata } from './metadata_parser.js';
 
 export const defaultAudioDeviceName = 'System Standard';
 
@@ -42,6 +43,7 @@ export function useSettings() {
   Object.keys(userPatterns).forEach((key) => {
     const data = userPatterns[key];
     data.id = data.id ?? key;
+    data.meta = getMetadata(data.code);
     userPatterns[key] = data;
   });
   return {
