@@ -89,7 +89,7 @@ export function PatternsTab({ context }) {
   const viewingPatternStore = useViewingPatternData();
   const viewingPatternData = parseJSON(viewingPatternStore);
 
-  const { userPatterns, patternFilter } = useSettings();
+  const { userPatterns, patternFilter, autoResetPatternOnChange } = useSettings();
 
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
@@ -98,8 +98,6 @@ export function PatternsTab({ context }) {
     context.handleUpdate(patternData, reset);
   };
   const viewingPatternID = viewingPatternData?.id;
-
-  const autoResetPatternOnChange = !window.parent?.location.pathname.includes('oodles');
 
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4 flex flex-col overflow-hidden max-h-full">
