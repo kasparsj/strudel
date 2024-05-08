@@ -65,6 +65,21 @@ Pattern.prototype.osc = function (options = {log: false}) {
     controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
     const keyvals = Object.entries(controls).flat();
     if (import.meta.env.DEV) {
+      const logMessage = (what, controls, keyvals) => {
+        let vals = [];
+        if (Array.isArray(what)) {
+          for (let p in what) {
+            vals.push(p);
+            vals.push(controls[p]);
+          }
+        } else if (typeof what === 'string') {
+          vals.push(what);
+          vals.push(controls[what]);
+        } else {
+          vals = keyvals;
+        }
+        logger(`[osc] ${vals.join(', ')}`);
+      }
       if (options.log) {
         logMessage(options.log, controls, keyvals);
       }
@@ -81,21 +96,3 @@ Pattern.prototype.osc = function (options = {log: false}) {
     osc.send(bundle);
   });
 };
-
-if (import.meta.env.DEV) {
-  const logMessage = (what, controls, keyvals) => {
-    let vals = [];
-    if (Array.isArray(what)) {
-      for (let p in what) {
-        vals.push(p);
-        vals.push(controls[p]);
-      }
-    } else if (typeof what === 'string') {
-      vals.push(what);
-      vals.push(controls[what]);
-    } else {
-      vals = keyvals;
-    }
-    logger(`[osc] ${vals.join(', ')}`);
-  }
-}
