@@ -1,4 +1,5 @@
 export const logKey = 'strudel.log';
+export const clearKey = 'strudel.clear';
 
 let debounce = 1000,
   lastMessage,
@@ -26,3 +27,23 @@ export function logger(message, type, data = {}) {
 }
 
 logger.key = logKey;
+logger.clearKey = clearKey;
+
+if (import.meta.env.DEV) {
+  if (typeof window !== 'undefined') {
+    // Record Control key event to trigger or block the tooltip depending on the state
+    window.addEventListener(
+        'keydown',
+        function (e) {
+          if ((e.ctrlKey && e.key === 'l') || (e.metaKey && e.key === 'k')) {
+            if (typeof document !== 'undefined' && typeof CustomEvent !== 'undefined') {
+              document.dispatchEvent(
+                  new CustomEvent(clearKey, {}),
+              );
+            }
+          }
+        },
+        true,
+    );
+  }
+}

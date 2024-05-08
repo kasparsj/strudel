@@ -40,10 +40,12 @@ function connect() {
  * For more info, read [MIDI & OSC in the docs](https://strudel.cc/learn/input-output/)
  *
  * @name osc
+ * @param {Object} options Object containing all the optional following parameters as key value pairs:
+ * @param {Array | string | boolean} log Specify which control value to log, or log all values with true (dev build)
  * @memberof Pattern
  * @returns Pattern
  */
-Pattern.prototype.osc = function () {
+Pattern.prototype.osc = function (options = {log: false}) {
   return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
     hap.ensureObjectValue();
     const osc = await connect();
@@ -62,6 +64,11 @@ Pattern.prototype.osc = function () {
     controls.bank && (controls.s = controls.bank + controls.s);
     controls.roomsize && (controls.size = parseNumeral(controls.roomsize));
     const keyvals = Object.entries(controls).flat();
+    if (import.meta.env.DEV) {
+      if (options.log) {
+        logMessage(options.log, controls, keyvals);
+      }
+    }
     // time should be audio time of onset
     // currentTime should be current time of audio context (slightly before time)
     const offset = getEventOffsetMs(targetTime, currentTime);
@@ -74,3 +81,21 @@ Pattern.prototype.osc = function () {
     osc.send(bundle);
   });
 };
+
+if (import.meta.env.DEV) {
+  const logMessage = (what, controls, keyvals) => {
+    let vals = [];
+    if (Array.isArray(what)) {
+      for (let p in what) {
+        vals.push(p);
+        vals.push(controls[p]);
+      }
+    } else if (typeof what === 'string') {
+      vals.push(what);
+      vals.push(controls[what]);
+    } else {
+      vals = keyvals;
+    }
+    logger(`[osc] ${vals.join(', ')}`);
+  }
+}
