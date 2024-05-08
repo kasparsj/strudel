@@ -45,7 +45,7 @@ function connect() {
  * @memberof Pattern
  * @returns Pattern
  */
-Pattern.prototype.osc = function (options = {log: false}) {
+Pattern.prototype.osc = function (options = { log: false }) {
   return this.onTrigger(async (time, hap, currentTime, cps = 1, targetTime) => {
     hap.ensureObjectValue();
     const osc = await connect();
@@ -79,7 +79,7 @@ Pattern.prototype.osc = function (options = {log: false}) {
           vals = keyvals;
         }
         logger(`[osc] ${vals.join(', ')}`);
-      }
+      };
       if (options.log) {
         logMessage(options.log, controls, keyvals);
       }

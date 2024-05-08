@@ -176,7 +176,7 @@ export function Repl({ embedded = false }) {
   const setCode = (code) => {
     editorRef.current.setCode(code);
     setDocumentTitle(code);
-  }
+  };
 
   const setDocumentTitle = (code) => {
     const meta = getMetadata(code);
@@ -203,8 +203,7 @@ export function Repl({ embedded = false }) {
       editorRef.current.setCode(patternData.code);
       await resetEditor();
       handleEvaluate();
-    }
-    else {
+    } else {
       setCode(patternData.code);
     }
   };

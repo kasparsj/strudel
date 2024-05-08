@@ -61,9 +61,9 @@ export function Panel({ context }) {
   );
 
   useClearLog(
-      useCallback((e) => {
-        setLog( []);
-      }, [])
+    useCallback((e) => {
+      setLog([]);
+    }, []),
   );
 
   const PanelTab = ({ children, name, label }) => (
@@ -120,7 +120,7 @@ export function Panel({ context }) {
             {activeFooter === 'console' && <ConsoleTab log={log} />}
             {activeFooter === 'sounds' && <SoundsTab />}
             {activeFooter === 'reference' && <Reference />}
-            {activeFooter === 'settings' && <SettingsTab started={context.started} />}
+            {activeFooter === 'settings' && <SettingsTab started={context} />}
             {activeFooter === 'files' && <FilesTab />}
           </div>
         </div>

@@ -2,6 +2,7 @@ import { defaultSettings, settingsMap, useSettings } from '../../settings.mjs';
 import { themes } from '@strudel/codemirror';
 import { ButtonGroup } from './Forms.jsx';
 import { AudioDeviceSelector } from './AudioDeviceSelector.jsx';
+import { userPattern } from '@src/user_pattern_utils.mjs';
 
 function Checkbox({ label, value, onChange }) {
   return (
@@ -77,7 +78,7 @@ const fontFamilyOptions = {
   galactico: 'galactico',
 };
 
-export function SettingsTab({ started }) {
+export function SettingsTab({ handleUpdate, started }) {
   const {
     theme,
     keybindings,
@@ -203,11 +204,22 @@ export function SettingsTab({ started }) {
       </FormItem>
       <FormItem label="Patterns">
         <Checkbox
-            label="Auto reset pattern on change"
-            disabled={window.parent?.location.pathname.includes('oodles')}
-            onChange={(cbEvent) => settingsMap.setKey('autoResetPatternOnChange', cbEvent.target.checked)}
-            value={autoResetPatternOnChange}
+          label="Auto reset pattern on change"
+          disabled={window.parent?.location.pathname.includes('oodles')}
+          onChange={(cbEvent) => settingsMap.setKey('autoResetPatternOnChange', cbEvent.target.checked)}
+          value={autoResetPatternOnChange}
         />
+        <button
+          className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
+          onClick={() => {
+            if (confirm('Sure?')) {
+              const { data } = userPattern.clearAll();
+              handleUpdate(data);
+            }
+          }}
+        >
+          delete all
+        </button>
       </FormItem>
       <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>
       <FormItem label="Reset Settings">
