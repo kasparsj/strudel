@@ -94,7 +94,7 @@ function PatternButton({fields, onClick, pattern}) {
       )}
     >
       {fields.map((field) => (
-          <span className="inline-block mr-2">{getField(field, pattern, meta)}</span>
+          <span key={field} className="inline-block mr-2">{getField(field, pattern, meta)}</span>
       ))}
     </span>
   );
