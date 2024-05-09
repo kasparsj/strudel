@@ -124,8 +124,7 @@ function PatternButtons({ patterns, fields, activePattern, started, onClick, onN
   const viewingPatternID = viewingPatternData.id;
   return (
     <div className="font-mono text-sm">
-      {Object.values(patterns)
-        .reverse()
+      {patterns
         .map((pattern) => {
           const id = pattern.id || 'undefined';
           return (
@@ -214,6 +213,15 @@ const UserPatterns = ({query, context}) => {
 
   const { userPatterns, patternView, autoResetPatternOnChange } = useSettings();
 
+  const re = new RegExp(query, "i");
+  let filteredPatterns = Object.values(userPatterns);
+  if (query) {
+    filteredPatterns = filteredPatterns.filter((p) => {
+      return p.meta.title && p.meta.title.match(re);
+    });
+  }
+  filteredPatterns = filteredPatterns.reverse();
+
   const updateCodeWindow = (patternData, reset = false) => {
     context.handleUpdate(patternData, reset);
   };
@@ -248,7 +256,7 @@ const UserPatterns = ({query, context}) => {
           onNewTab={openPatternNewTab}
           onDuplicate={duplicatePattern}
           onDelete={deletePattern}
-          patterns={userPatterns}
+          patterns={filteredPatterns}
           fields={['icon', 'title', 'project', 'actions']}
           started={context.started}
           activePattern={activePattern}
