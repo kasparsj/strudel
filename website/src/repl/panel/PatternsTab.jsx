@@ -209,7 +209,7 @@ const PatternTabUserHeader = ({ onNew, onSearch, patternView }) => {
   );
 };
 
-const UserPatterns = ({ query, context }) => {
+const UserPatterns = ({ query, tag = 'title', context }) => {
   const activePattern = useActivePattern();
   const viewingPatternStore = useViewingPatternData();
   const viewingPatternData = parseJSON(viewingPatternStore);
@@ -217,11 +217,12 @@ const UserPatterns = ({ query, context }) => {
 
   const { userPatterns, patternView, autoResetPatternOnChange } = useSettings();
 
-  const re = new RegExp(query, 'i');
+  const q = (query || '').trim();
+  const re = new RegExp(q, 'i');
   let filteredPatterns = Object.values(userPatterns);
-  if (query) {
+  if (q) {
     filteredPatterns = filteredPatterns.filter((p) => {
-      return p.meta.title && p.meta.title.match(re);
+      return p.meta[tag] && p.meta[tag].match(re);
     });
   }
   filteredPatterns = filteredPatterns.reverse();
@@ -327,8 +328,7 @@ export function PatternsTab({ context }) {
   const activePattern = useActivePattern();
   const { patternFilter, patternView, autoResetPatternOnChange } = useSettings();
   const [query, setQuery] = useState('');
-  const command = [...query.matchAll(/^(list)\s*@([a-z]+)$/gi)];
-  console.log(command);
+  const command = [...query.matchAll(/^(list|)\s*(@[a-z]+)(\s.*)?$/gi)];
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
 
@@ -360,8 +360,13 @@ export function PatternsTab({ context }) {
         {patternFilter === patternFilterName.user && (
           <>
             {command.length === 0 && <UserPatterns query={query} context={context} />}
-            {command.length > 0 && command[0][1] === 'list' && <UserTags tag={command[0][2]} context={context} />}
-            {command.length > 0 && command[0][1] === 'tags' && <UserTags context={context} />}
+            {command.length > 0 && !command[0][1] && command[0][2] !== '@tags' && (
+              <UserPatterns tag={command[0][2]} query={command[0][3]} context={context} />
+            )}
+            {command.length > 0 && command[0][1] === 'list' && (
+              <UserTags tag={command[0][2].substring(1)} context={context} />
+            )}
+            {command.length > 0 && command[0][2] === '@tags' && <UserTags context={context} />}
           </>
         )}
         {patternFilter !== patternFilterName.user &&
