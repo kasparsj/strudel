@@ -6,7 +6,7 @@ import {
   useViewingPatternData,
   userPattern,
 } from '../../user_pattern_utils.mjs';
-import {useMemo, useState} from 'react';
+import { useMemo, useState } from 'react';
 import { getMetadata } from '../../metadata_parser';
 import { useExamplePatterns } from '../useExamplePatterns';
 import { parseJSON } from '../util.mjs';
@@ -124,25 +124,24 @@ function PatternButtons({ patterns, fields, activePattern, started, onClick, onN
   const viewingPatternID = viewingPatternData.id;
   return (
     <div className="font-mono text-sm">
-      {patterns
-        .map((pattern) => {
-          const id = pattern.id || 'undefined';
-          return (
-            <div
-              className={classNames(
-                id === viewingPatternID && 'bg-selection',
-                id === activePattern && started && 'outline outline-1',
-                'relative',
-              )}
-              key={id}
-            >
-              <PatternButton fields={fields} pattern={pattern} onClick={() => onClick(id)} />
-              {(onNewTab || onDuplicate || onDelete) && (
-                <PatternActions pattern={pattern} onNewTab={onNewTab} onDuplicate={onDuplicate} onDelete={onDelete} />
-              )}
-            </div>
-          );
-        })}
+      {patterns.map((pattern) => {
+        const id = pattern.id || 'undefined';
+        return (
+          <div
+            className={classNames(
+              id === viewingPatternID && 'bg-selection',
+              id === activePattern && started && 'outline outline-1',
+              'relative',
+            )}
+            key={id}
+          >
+            <PatternButton fields={fields} pattern={pattern} onClick={() => onClick(id)} />
+            {(onNewTab || onDuplicate || onDelete) && (
+              <PatternActions pattern={pattern} onNewTab={onNewTab} onDuplicate={onDuplicate} onDelete={onDelete} />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -156,56 +155,61 @@ function ActionButton({ children, onClick, label, labelIsHidden }) {
   );
 }
 
-function SearchInput({onSearch}) {
+function SearchInput({ onSearch }) {
   return (
-      <form className="flex-grow">
-        <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
-          Search
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <SearchIcon className="w-4 h-4"/>
-          </div>
-          <input type="search" id="default-search" className="block w-full p-2 ps-10 text-sm rounded-md bg-background"
-                 placeholder="search" onChange={onSearch} />
+    <form className="flex-grow">
+      <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
+        Search
+      </label>
+      <div className="relative">
+        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+          <SearchIcon className="w-4 h-4" />
         </div>
-      </form>
+        <input
+          type="search"
+          id="default-search"
+          className="block w-full p-2 ps-10 text-sm rounded-md bg-background"
+          placeholder="search"
+          onChange={onSearch}
+        />
+      </div>
+    </form>
   );
 }
 
-const PatternTabUserHeader = ({onNew, onSearch, patternView}) => {
+const PatternTabUserHeader = ({ onNew, onSearch, patternView }) => {
   return (
-      <div className="pr-4 space-x-4 border-b border-foreground flex max-w-full overflow-x-auto pb-1">
-        <ActionButton label="new" onClick={onNew}/>
-        <label className="hover:opacity-50 cursor-pointer leading-9">
-          <input
-              style={{display: 'none'}}
-              type="file"
-              multiple
-              accept="text/plain,application/json"
-              onChange={(e) => importPatterns(e.target.files)}
-          />
-          import
-        </label>
-        <ActionButton label="export" onClick={exportPatterns}/>
-        <SearchInput onSearch={onSearch} />
-        {patternView === 'thumbs' && (
-            <ActionButton
-                label={<ListViewIcon className="w-4 h-4 mr-2"/>}
-                onClick={() => settingsMap.setKey('patternView', 'list')}
-            />
-        )}
-        {patternView === 'list' && (
-            <ActionButton
-                label={<ThumbViewIcon className="w-4 h-4 mr-2"/>}
-                onClick={() => settingsMap.setKey('patternView', 'thumbs')}
-            />
-        )}
-      </div>
+    <div className="pr-4 space-x-4 border-b border-foreground flex max-w-full overflow-x-auto pb-1">
+      <ActionButton label="new" onClick={onNew} />
+      <label className="hover:opacity-50 cursor-pointer leading-9">
+        <input
+          style={{ display: 'none' }}
+          type="file"
+          multiple
+          accept="text/plain,application/json"
+          onChange={(e) => importPatterns(e.target.files)}
+        />
+        import
+      </label>
+      <ActionButton label="export" onClick={exportPatterns} />
+      <SearchInput onSearch={onSearch} />
+      {patternView === 'thumbs' && (
+        <ActionButton
+          label={<ListViewIcon className="w-4 h-4 mr-2" />}
+          onClick={() => settingsMap.setKey('patternView', 'list')}
+        />
+      )}
+      {patternView === 'list' && (
+        <ActionButton
+          label={<ThumbViewIcon className="w-4 h-4 mr-2" />}
+          onClick={() => settingsMap.setKey('patternView', 'thumbs')}
+        />
+      )}
+    </div>
   );
 };
 
-const UserPatterns = ({query, context}) => {
+const UserPatterns = ({ query, context }) => {
   const activePattern = useActivePattern();
   const viewingPatternStore = useViewingPatternData();
   const viewingPatternData = parseJSON(viewingPatternStore);
@@ -213,7 +217,7 @@ const UserPatterns = ({query, context}) => {
 
   const { userPatterns, patternView, autoResetPatternOnChange } = useSettings();
 
-  const re = new RegExp(query, "i");
+  const re = new RegExp(query, 'i');
   let filteredPatterns = Object.values(userPatterns);
   if (query) {
     filteredPatterns = filteredPatterns.filter((p) => {
@@ -323,8 +327,8 @@ export function PatternsTab({ context }) {
   const activePattern = useActivePattern();
   const { patternFilter, patternView, autoResetPatternOnChange } = useSettings();
   const [query, setQuery] = useState('');
-  const command = [...query.matchAll(/^(list)\s*@([a-z]+)$/ig)];
-  console.log(command)
+  const command = [...query.matchAll(/^(list)\s*@([a-z]+)$/gi)];
+  console.log(command);
   const examplePatterns = useExamplePatterns();
   const collections = examplePatterns.collections;
 
@@ -335,11 +339,11 @@ export function PatternsTab({ context }) {
   const onNew = () => {
     const { data } = userPattern.createAndAddToDB();
     updateCodeWindow(data);
-  }
+  };
 
   const onSearch = (ev) => {
     setQuery(ev.target.value);
-  }
+  };
 
   return (
     <div className="px-4 w-full dark:text-white text-stone-900 space-y-2 pb-4 flex flex-col overflow-hidden max-h-full">
@@ -349,11 +353,7 @@ export function PatternsTab({ context }) {
         items={patternFilterName}
       ></ButtonGroup>
       {patternFilter === patternFilterName.user && (
-        <PatternTabUserHeader
-          onNew={onNew}
-          onSearch={onSearch}
-          patternView={patternView}
-        />
+        <PatternTabUserHeader onNew={onNew} onSearch={onSearch} patternView={patternView} />
       )}
 
       <section className="flex overflow-y-scroll max-h-full flex-col">
@@ -366,7 +366,7 @@ export function PatternsTab({ context }) {
         )}
         {patternFilter !== patternFilterName.user &&
           Array.from(collections.keys()).map((collection) => {
-            const patterns = collections.get(collection);
+            const patterns = Object.values(collections.get(collection));
             return (
               <section key={collection} className="py-2">
                 <h2 className="text-xl mb-2">{collection}</h2>
