@@ -29,7 +29,7 @@ import {
   getViewingPatternData,
   setViewingPatternData,
 } from '../user_pattern_utils.mjs';
-import { Header } from './Header';
+import { Header, Footer } from './Header';
 import Loader from './Loader';
 import { Panel } from './panel/Panel';
 import { useStore } from '@nanostores/react';
@@ -62,7 +62,7 @@ async function getModule(name) {
 
 export function Repl({ embedded = false }) {
   const isEmbedded = embedded || isIframe;
-  const { panelPosition, isZen, isSyncEnabled } = useSettings();
+  const { panelPosition, isZen, isSyncEnabled, hideHeader } = useSettings();
   const init = useCallback(() => {
     const drawTime = [-2, 2];
     const drawContext = getDrawContext();
@@ -240,7 +240,8 @@ export function Repl({ embedded = false }) {
     <ReplContext.Provider value={context}>
       <div className={cx('h-full flex flex-col relative')}>
         <Loader active={pending} />
-        <Header context={context} />
+        {!hideHeader && <Header context={context} />}
+        {hideHeader && <Footer context={context} />}
         {isEmbedded && !started && (
           <button
             onClick={() => handleTogglePlay()}

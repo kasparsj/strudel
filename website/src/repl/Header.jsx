@@ -11,6 +11,36 @@ import './Repl.css';
 const { BASE_URL } = import.meta.env;
 const baseNoTrailing = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
 
+function Logo({ started, isZen, isEmbedded }) {
+  return (
+    <h1
+      onClick={() => {
+        if (isEmbedded) window.open(window.location.href.replace('embed', ''));
+      }}
+      className={cx(
+        isEmbedded ? 'text-l cursor-pointer' : 'text-xl',
+        'text-foreground font-bold flex space-x-2 items-center',
+      )}
+    >
+      <div
+        className={cx('mt-[1px]', started && 'animate-spin', 'cursor-pointer')}
+        onClick={() => {
+          if (!isEmbedded) {
+            setIsZen(!isZen);
+          }
+        }}
+      >
+        🌀
+      </div>
+      {!isZen && (
+        <div className={cx(started && 'animate-pulse')}>
+          <span className="">strudel</span> <span className="text-sm">REPL</span>
+        </div>
+      )}
+    </h1>
+  );
+}
+
 export function Header({ context }) {
   const {
     embedded,
@@ -38,35 +68,11 @@ export function Header({ context }) {
     >
       <div className="px-4 flex space-x-2 md:pt-0 select-none">
         {/*             <img
-    src={logo}
-    className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10', started && 'animate-pulse')} // 'bg-[#ffffff80] rounded-full'
-    alt="logo"
-  /> */}
-        <h1
-          onClick={() => {
-            if (isEmbedded) window.open(window.location.href.replace('embed', ''));
-          }}
-          className={cx(
-            isEmbedded ? 'text-l cursor-pointer' : 'text-xl',
-            'text-foreground font-bold flex space-x-2 items-center',
-          )}
-        >
-          <div
-            className={cx('mt-[1px]', started && 'animate-spin', 'cursor-pointer')}
-            onClick={() => {
-              if (!isEmbedded) {
-                setIsZen(!isZen);
-              }
-            }}
-          >
-            🌀
-          </div>
-          {!isZen && (
-            <div className={cx(started && 'animate-pulse')}>
-              <span className="">strudel</span> <span className="text-sm">REPL</span>
-            </div>
-          )}
-        </h1>
+      src={logo}
+      className={cx('Tidal-logo', isEmbedded ? 'w-8 h-8' : 'w-10 h-10', started && 'animate-pulse')} // 'bg-[#ffffff80] rounded-full'
+      alt="logo"
+    /> */}
+        <Logo started={started} isZen={isZen} isEmbedded={isEmbedded} />
       </div>
       {!isZen && (
         <div className="flex max-w-full overflow-auto text-foreground">
@@ -153,5 +159,17 @@ export function Header({ context }) {
         </div>
       )}
     </header>
+  );
+}
+
+export function Footer({ context }) {
+  const { embedded, started } = context;
+  const isEmbedded = typeof window !== 'undefined' && (embedded || window.location !== window.parent.location);
+  const { isZen } = useSettings();
+
+  return (
+    <div className="absolute right-1 bottom-0 z-20">
+      <Logo started={started} isZen={isZen} isEmbedded={isEmbedded} />
+    </div>
   );
 }

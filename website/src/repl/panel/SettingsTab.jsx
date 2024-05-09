@@ -97,6 +97,7 @@ export function SettingsTab({ handleUpdate, started }) {
     fontFamily,
     panelPosition,
     audioDeviceName,
+    hideHeader,
   } = useSettings();
 
   return (
@@ -221,7 +222,14 @@ export function SettingsTab({ handleUpdate, started }) {
           delete all
         </button>
       </FormItem>
-      <FormItem label="Zen Mode">Try clicking the logo in the top left!</FormItem>
+      <FormItem label="Zen Mode">
+        Try clicking the logo in the {hideHeader ? 'bottom right' : 'top left'}!
+        <Checkbox
+          label="Hide header"
+          onChange={(cbEvent) => settingsMap.setKey('hideHeader', cbEvent.target.checked)}
+          value={hideHeader}
+        />
+      </FormItem>
       <FormItem label="Reset Settings">
         <button
           className="bg-background p-2 max-w-[300px] rounded-md hover:opacity-50"
