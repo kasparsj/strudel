@@ -27,6 +27,7 @@ export const defaultSettings = {
   panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
+  hideHeader: false,
 };
 
 export const settingsMap = persistentMap('strudel-settings', defaultSettings);
@@ -55,6 +56,7 @@ export function useSettings() {
     isLineWrappingEnabled: parseBoolean(state.isLineWrappingEnabled),
     isFlashEnabled: parseBoolean(state.isFlashEnabled),
     isSyncEnabled: parseBoolean(state.isSyncEnabled),
+    hideHeader: parseBoolean(state.hideHeader),
     fontSize: Number(state.fontSize),
     panelPosition: state.activeFooter !== '' ? state.panelPosition : 'bottom', // <-- keep this 'bottom' where it is!
     userPatterns: userPatterns,
