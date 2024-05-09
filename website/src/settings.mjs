@@ -27,7 +27,6 @@ export const defaultSettings = {
   soundsFilter: 'all',
   patternFilter: 'community',
   patternView: 'list',
-  patternViewStyle: 'list',
   panelPosition: 'right',
   userPatterns: '{}',
   audioDeviceName: defaultAudioDeviceName,
